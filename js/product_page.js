@@ -1,130 +1,4 @@
-// Product
-const product = {
-  id: "prod_001",
-  title: "Premium Cotton T-Shirt",
-  description: "Soft, breathable cotton tee perfect for everyday wear.",
-
-  // Different images for each color
-  images: {
-    black: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600",
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600",
-    ],
-    white: [
-      "https://images.unsplash.com/photo-1622445275463-afa2ab738733?w=600",
-      "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600",
-    ],
-    navy: [
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600",
-      "https://images.unsplash.com/photo-1503341338950-82e2e6e3c5b4?w=600",
-    ],
-  },
-
-  // All possible variants (color + size combinations)
-  variants: [
-    // Black variants
-    {
-      id: "var_001",
-      color: "black",
-      size: "S",
-      price: 29.99,
-      stock: 5,
-      sku: "TSH-BLK-S",
-    },
-    {
-      id: "var_002",
-      color: "black",
-      size: "M",
-      price: 29.99,
-      stock: 10,
-      sku: "TSH-BLK-M",
-    },
-    {
-      id: "var_003",
-      color: "black",
-      size: "L",
-      price: 29.99,
-      stock: 8,
-      sku: "TSH-BLK-L",
-    },
-    {
-      id: "var_004",
-      color: "black",
-      size: "XL",
-      price: 32.99,
-      stock: 0,
-      sku: "TSH-BLK-XL",
-    },
-
-    // White variants
-    {
-      id: "var_005",
-      color: "white",
-      size: "S",
-      price: 29.99,
-      stock: 3,
-      sku: "TSH-WHT-S",
-    },
-    {
-      id: "var_006",
-      color: "white",
-      size: "M",
-      price: 29.99,
-      stock: 12,
-      sku: "TSH-WHT-M",
-    },
-    {
-      id: "var_007",
-      color: "white",
-      size: "L",
-      price: 29.99,
-      stock: 0,
-      sku: "TSH-WHT-L",
-    },
-    {
-      id: "var_008",
-      color: "white",
-      size: "XL",
-      price: 32.99,
-      stock: 6,
-      sku: "TSH-WHT-XL",
-    },
-
-    // Navy variants
-    {
-      id: "var_009",
-      color: "navy",
-      size: "S",
-      price: 29.99,
-      stock: 0,
-      sku: "TSH-NVY-S",
-    },
-    {
-      id: "var_010",
-      color: "navy",
-      size: "M",
-      price: 29.99,
-      stock: 15,
-      sku: "TSH-NVY-M",
-    },
-    {
-      id: "var_011",
-      color: "navy",
-      size: "L",
-      price: 29.99,
-      stock: 7,
-      sku: "TSH-NVY-L",
-    },
-    {
-      id: "var_012",
-      color: "navy",
-      size: "XL",
-      price: 32.99,
-      stock: 4,
-      sku: "TSH-NVY-XL",
-    },
-  ],
-};
+import products from "./products.js";
 
 // Data object
 const state = {
@@ -135,210 +9,206 @@ const state = {
   cart: [],
 };
 
+function uniqueColors(theArray) {
+  let productColors = theArray.reduce((prev, current) => {
+    // checking if the current color exist in the array
+    if (!prev.includes(current.color)) {
+      prev.push(current.color);
+    }
+    return prev;
+  }, []);
+  return productColors;
+}
+
 function renderProduct() {
   // Main product wrapper
   const mainProductWrapper = document.querySelector("#main-product-wrapper");
 
-  //main image
-  const mainImage = document.querySelector("#main-image");
+  // display unique color
+  const colors = uniqueColors(products.variants);
 
-  //thumbnails image
-  const thumbnailsImages = document.querySelector("#thumbnails-image");
+  let defaultColor = state.selectedColor
+    ? state.selectedColor
+    : products.variants[0].color;
 
-  // stock status
-  const stockStatus = document.querySelector("#stock-status");
+  // display unique sizes
+  const filterSelectedColor = products.variants.filter(
+    (product) => product.color === defaultColor,
+  );
 
-  // variant info
-  const variantInfo = document.querySelector("#variant-info");
-
-  //quantity descrease
-  const qtyDecrease = document.querySelector("#qty-decrease");
-
-  // quantity
-  const quantity = document.querySelector("#quantity");
-
-  // quantity inscrease
-  const qtyIncrease = document.querySelector("#qty-increase");
-
-  //message
-  const message = document.querySelector("#message");
-
-  //product title
-  const productTitle = document.querySelector("#product-title");
-
-  // product description
-  const productDescription = document.querySelector("#product-description");
-
-  // product price
-  const productPrice = document.querySelector("#product-price");
-
-  // Destructuring product
-  const { id, title, description, images, variants } = product;
-
-  const uniqueColors = variants.reduce((colors, variant) => {
-    if (!colors.includes(variant.color)) {
-      colors.push(variant.color);
+  const sizes = filterSelectedColor.reduce((prev, current) => {
+    if (!prev.includes(current.size)) {
+      prev.push(current.size);
     }
-    return colors;
+    return prev;
   }, []);
 
-  const defaultColor = "black";
-
-  const availableSizes = variants
-    .filter((v) => v.color === defaultColor)
-    .reduce((sizes, variant) => {
-      if (!sizes.includes(variant.size)) {
-        sizes.push(variant.size);
-      }
-      return sizes;
-    }, []);
+  console.log(1);
 
   function UI() {
     return `
-                 <!-- LEFT SIDE: Images -->
-                  <div class="space-y-4">
-                    <!-- Main Image -->
-                    <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                      <img
-                        id="main-image"
-                        src="${images.black[0]}"
-                        alt="Product Image"
-                        class="w-full h-full object-cover"
-                      />
-                    </div>
+          <!-- LEFT SIDE: Images -->
+          <div class="space-y-4">
+            <!-- Main Image -->
+            <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+              <img
+                id="main-image"
+                src="${products.images.black[0]}"
+                alt="Product Image"
+                class="w-full h-full object-cover"
+              />
+            </div>
 
-                    <!-- Thumbnail Images -->
-                    <div class="grid grid-cols-4 gap-2" id="thumbnails-image">
-                      <!-- Generated by JavaScript -->
-                       <img
-                        id="main-image"
-                        src="${images.black[1]}"
-                        alt="Product Image"
-                        class="w-full h-full object-cover"
-                      />
+            <!-- Thumbnail Images -->
+            <div class="grid grid-cols-4 gap-2" id="thumbnails-image">
+              <!-- Generated by JavaScript -->
+                <img
+                id="main-image"
+                src="${products.images.black[1]}"
+                alt="Product Image"
+                class="w-full h-full object-cover"
+              />
 
-                    </div>
-                  </div>
+            </div>
+          </div>
 
-                  <!-- RIGHT SIDE: Product Info -->
-                  <div class="space-y-6">
-                    <!-- Product Title -->
-                    <div>
-                      <h1
-                        id="product-title"
-                        class="text-3xl font-bold text-gray-900"
-                      >${title}</h1>
-                      <p id="product-description" class="text-gray-600 mt-2">${description}</p>
-                    </div>
+          <!-- RIGHT SIDE: Product Info -->
+          <div class="space-y-6">
+            <!-- Product Title -->
+            <div>
+              <h1
+                id="product-title"
+                class="text-3xl font-bold text-gray-900"
+              >${products.title}</h1>
+              <p id="product-description" class="text-gray-600 mt-2">${products.description}</p>
+            </div>
 
-                    <!-- Price -->
-                    <div class="flex items-baseline gap-2">
-                      <span
-                        id="product-price"
-                        class="text-3xl font-bold text-gray-900"
-                      >$${variants[0].price.toFixed(2)}</span>
-                    </div>
+            <!-- Price -->
+            <div class="flex items-baseline gap-2">
+              <span
+                id="product-price"
+                class="text-3xl font-bold text-gray-900"
+              >$${products.variants[0].price.toFixed(2)}</span>
+            </div>
 
-                    <!-- Stock Status -->
-                    <div id="stock-status" class="text-sm font-medium">
-                      <!-- Generated by JavaScript -->
-                      In stock: ${variants[0].stock}
-                    </div>
+            <!-- Stock Status -->
+            <div id="stock-status" class="text-sm font-medium">
+              <!-- Generated by JavaScript -->
+              In stock: ${products.variants[0].stock}
+            </div>
 
-                    <!-- Variant Info (Debug - Remove in production) -->
-                    <div
-                      id="variant-info"
-                      class="text-base flex flex-col text-gray-500 bg-gray-50 p-3 rounded"
-                    >
-                      <!-- Shows selected variant details -->
-                      <span class="capitalize">Selected color: ${variants[0].color}</span>
-                      <span class="capitalize">Selected size: ${variants[0].size}</span>
+            <!-- Variant Info (Debug - Remove in production) -->
+            <div
+              id="variant-info"
+              class="text-base flex flex-col text-gray-500 bg-gray-50 p-3 rounded"
+            >
+              <!-- Shows selected variant details -->
+              <span class="capitalize">Selected color: ${colors[0]}</span>
+              <span class="capitalize">Selected size:</span>
 
-                    </div>
+            </div>
 
-                    <!-- Color Selector -->
-                    <div class="space-y-3">
-                      <label class="block text-sm font-medium text-gray-700">
-                        Color:
-                        <span id="selected-color-text" class="text-gray-900 capitalize font-semibold"
-                          >${variants[0].color}</span
-                        >
-                      </label>
-                      <div class="flex gap-3" id="color-swatches">
-                        <!-- Generated by JavaScript -->
-                         ${uniqueColors
-                           .map((color) => {
-                             return `<span style="background-color:${color}" class="w-7 h-7 border p-4 rounded-full cursor-pointer flex justify-center shadow items-center text-sm blocks"></span>`;
-                           })
-                           .join("")}
-                      </div>
-                    </div>
+            <!-- Color Selector -->
+            <div class="space-y-3">
+              <label class="block text-sm font-medium text-gray-700">
+                Color:
+                <span id="selected-color-text" class="text-gray-900 capitalize font-semibold"
+                  >${state.selectedColor ? state.selectedColor : colors[0]}</span
+                >
+              </label>
+              <div class="flex gap-3" id="color-swatches">
+                <!-- Generated by JavaScript -->
+                  ${colors
+                    .map((color) => {
+                      return `<span style="background-color:${color}" class="swatches w-7 h-7 p-4 rounded-full  cursor-pointer flex justify-center border items-center text-sm blocks"></span>`;
+                    })
+                    .join("")}
+              </div>
+            </div>
 
-                    <!-- Size Selector -->
-                    <div class="space-y-3">
-                      <label class="block text-sm font-medium text-gray-700">
-                        Size:
-                        <span id="selected-size-text" class="text-gray-900 font-semibold"
-                          >
-                            ${variants[0].size}
-                          </span
-                        >
-                      </label>
-                      <div class="flex gap-2" id="size-buttons">
-                        <!-- Generated by JavaScript -->
-                         ${availableSizes
-                           .map((size) => {
-                             return `<span class="w-7 h-7 border rounded-full cursor-pointer flex justify-center items-center text-sm blocks">${size}</span>`;
-                           })
-                           .join("")}
-                      </div>
-                    </div>
+            <!-- Size Selector -->
+            <div class="space-y-3">
+              <label class="block text-sm font-medium text-gray-700">
+                Size:
+                <span id="selected-size-text" class="text-gray-900 font-semibold"
+                  >
+                    ${state.selectedSize ? state.selectedSize : ""}
+                  </span
+                >
+              </label>
+              <div class="flex gap-2" id="size-buttons">
+                <!-- Generated by JavaScript -->
+                ${sizes
+                  .map((size) => {
+                    return `<span class="w-6 h-6 text-sm flex justify-center items-center cursor-pointer rounded border border-gray-800">${size}</span>`;
+                  })
+                  .join("")}
+                  
+              </div>
+            </div>
 
-                    <!-- Quantity Selector -->
-                    <div class="space-y-3">
-                      <label class="block text-sm font-medium text-gray-700"
-                        >Quantity</label
-                      >
-                      <div class="flex items-center gap-3">
-                        <button
-                          id="qty-decrease"
-                          class="w-10 h-10 rounded-md border border-gray-300 hover:bg-gray-50 flex items-center justify-center font-semibold"
-                        >
-                          −
-                        </button>
-                        <input
-                          type="number"
-                          id="quantity"
-                          value="1"
-                          min="1"
-                          max="10"
-                          class="w-20 h-10 text-center border border-gray-300 rounded-md"
-                        />
-                        <button
-                          id="qty-increase"
-                          class="w-10 h-10 rounded-md border border-gray-300 hover:bg-gray-50 flex items-center justify-center font-semibold"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
+            <!-- Quantity Selector -->
+            <div class="space-y-3">
+              <label class="block text-sm font-medium text-gray-700"
+                >Quantity</label
+              >
+              <div class="flex items-center gap-3">
+                <button
+                  id="qty-decrease"
+                  class="w-10 h-10 rounded-md border border-gray-300 hover:bg-gray-50 flex items-center justify-center cursor-pointer font-semibold"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  id="quantity"
+                  value="1"
+                  min="1"
+                  max="10"
+                  class="w-20 h-10 text-center border border-gray-300 rounded-md"
+                />
+                <button
+                  id="qty-increase"
+                  class="w-10 h-10 rounded-md border border-gray-300 hover:bg-gray-50 flex items-center justify-center cursor-pointer  font-semibold"
+                >
+                  +
+                </button>
+              </div>
+            </div>
 
-                    <!-- Add to Cart Button -->
-                    <button
-                      id="add-to-cart"
-                      class="w-full bg-black text-white py-4 px-6 rounded-md font-semibold hover:bg-gray-800 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    >
-                      Add to Cart
-                    </button>
+            <!-- Add to Cart Button -->
+            <button
+              id="add-to-cart"
+              class="w-full bg-black text-white py-4 px-6 rounded-md font-semibold hover:bg-gray-800 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              Add to Cart
+            </button>
 
-                    <!-- Message Display -->
-                    <div id="message" class="hidden"></div>
-                  </div>
-              `;
+            <!-- Message Display -->
+            <div id="message" class="hidden"></div>
+          </div>
+      `;
   }
   mainProductWrapper.innerHTML = UI();
 }
 renderProduct();
 
-const name = "kamba";
-console.log(name);
+function selectColorVariant() {
+  const swatches = document.querySelectorAll(".swatches ");
+
+  swatches.forEach((swatche, index) => {
+    swatche.addEventListener("click", () => {
+      //
+      const select = products.variants.filter(
+        (variant) => variant.color === swatche.style.backgroundColor,
+      );
+
+      state.selectedColor = uniqueColors(select).toString();
+      console.log(state.selectedColor);
+
+      renderProduct();
+    });
+  });
+}
+
+selectColorVariant();

@@ -1,4 +1,4 @@
-export const products = {
+const products = {
   id: "prod_001",
   title: "Premium Cotton T-Shirt",
   description: "Soft, breathable cotton tee perfect for everyday wear.",
@@ -124,3 +124,5 @@ export const products = {
     },
   ],
 };
+
+export default products;
