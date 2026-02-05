@@ -143,10 +143,11 @@ function renderProduct() {
       <label class="block text-sm font-medium text-gray-700"
         >Quantity</label
       >
-      <div class="flex items-center gap-3">
+      <div id="btn-qty" class="flex items-center gap-3">
         <button
           id="qty-decrease"
           class="w-10 h-10 rounded-md border border-gray-300 hover:bg-gray-50 flex items-center justify-center cursor-pointer font-semibold"
+          data-button="decrease"
         >
           −
         </button>
@@ -161,6 +162,7 @@ function renderProduct() {
         <button
           id="qty-increase"
           class="w-10 h-10 rounded-md border border-gray-300 hover:bg-gray-50 flex items-center justify-center cursor-pointer  font-semibold"
+          data-button="increase"
         >
           +
         </button>
@@ -170,7 +172,7 @@ function renderProduct() {
     <!-- Add to Cart Button -->
     <button
       id="add-to-cart"
-      class="w-full bg-black text-white py-4 px-6 rounded-md font-semibold hover:bg-gray-800 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+      class="w-full bg-black text-white py-4 px-6 rounded-md cursor-pointer font-semibold hover:bg-gray-800 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
     >
       Add to Cart
     </button>
@@ -258,5 +260,28 @@ function swatches() {
     renderProduct();
     swatches();
   });
+
+  countQty();
 }
 swatches();
+
+function countQty() {
+  let count = 1;
+  let displayedValue = document.querySelector("#quantity");
+
+  const btnQty = document.querySelector("#btn-qty");
+  btnQty.addEventListener("click", (e) => {
+    if (e.target.dataset.button === "increase") {
+      ++count;
+      displayedValue.value = count;
+    } else {
+      if (count === 1) {
+        return (count = 1);
+      }
+      --count;
+      displayedValue.value = count;
+    }
+  });
+  state.quantity = count;
+  return count;
+}
