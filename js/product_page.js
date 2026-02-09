@@ -13,6 +13,9 @@ const state = {
   cart: [],
 };
 
+// Flag to track if listeners are attached
+let listenersAttached = false;
+
 // render product
 function renderProduct() {
   // Main product wrapper
@@ -154,7 +157,7 @@ function renderProduct() {
         <input
           type="number"
           id="quantity"
-          value="1"
+          value="${state.quantity}"
           min="1"
           max="10"
           class="w-20 h-10 text-center border border-gray-300 rounded-md"
@@ -215,10 +218,22 @@ function displayImage(defaultColor) {
 }
 
 function swatches() {
+  // Check if listeners already attached
+  if (listenersAttached) {
+    return; // Exit early
+  }
+
+  // Mark as attached
+  listenersAttached = true;
+
   //grab the colors
   const colors = document.getElementById("color-swatches");
   //grab the sizes
   const buttons = document.querySelector("#size-buttons");
+  // grab the quantity input
+  let displayedValue = document.querySelector("#quantity");
+  //grab increase and decrease btn
+  const btnQty = document.querySelector("#btn-qty");
 
   // on click on the color
   colors.addEventListener("click", (e) => {
@@ -238,11 +253,13 @@ function swatches() {
     state.showStock = updatingSizes[0].stock; // update the stock
     state.selectedSize = updatingSizes[0].size; // update the selectedSize
 
+    // Reset flag before re-rendering
+    listenersAttached = false;
     renderProduct();
-
-    swatches();
+    swatches(); // Re-attach listeners
   });
 
+  // on click choose size based on default color
   buttons.addEventListener("click", function (e) {
     let getCorrespondingSizes = products.variants.filter(
       (variant) => variant.color === state.selectedColor,
@@ -257,31 +274,49 @@ function swatches() {
     state.selectedPrice = currentSize.price;
     state.selectedSize = currentSize.size;
 
+    // Reset flag before re-rendering
+    listenersAttached = false;
     renderProduct();
-    swatches();
+    swatches(); // Re-attach listeners
   });
 
-  countQty();
-}
-swatches();
-
-function countQty() {
-  let count = 1;
-  let displayedValue = document.querySelector("#quantity");
-
-  const btnQty = document.querySelector("#btn-qty");
+  // on click increase || decrease quantity
   btnQty.addEventListener("click", (e) => {
     if (e.target.dataset.button === "increase") {
-      ++count;
-      displayedValue.value = count;
+      state.quantity++;
+      displayedValue.value = state.quantity;
     } else {
-      if (count === 1) {
-        return (count = 1);
+      if (state.quantity === 1) {
+        state.quantity = 1;
+      } else {
+        state.quantity--;
+        displayedValue.value = state.quantity;
       }
-      --count;
-      displayedValue.value = count;
     }
   });
-  state.quantity = count;
-  return count;
+
+  // adding to cart
+  cart();
 }
+
+function cart() {
+  const addToCart = document.querySelector("#add-to-cart");
+
+  addToCart.addEventListener("click", (e) => {
+    state.cart.push({
+      title: products.title,
+      description: products.description,
+      price: state.selectedPrice,
+      stock: state.showStock,
+      color: state.selectedColor,
+      size: state.selectedSize,
+      qty: state.quantity,
+    });
+
+    console.log(state.cart);
+  });
+}
+
+// Initialize
+renderProduct();
+swatches();
